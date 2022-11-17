@@ -10,6 +10,19 @@ import Graves from "./Graves";
 
 import "./styles.css";
 
+const houses = [
+  {
+    position: [-1.2, 0, 0],
+  },
+  {
+    position: [-6.2, 0, 0],
+  },
+  {
+    position: [4, 0, 0],
+  },
+];
+
+
 const Camera = ({ ...rest }) => {
   const camera = useRef();
   const { setDefaultCamera } = useThree();
@@ -36,14 +49,14 @@ export default function App() {
       <ambientLight intensity={0.15} color="#b9d5ff" />
 
       <Suspense fallback={null}>
-        <House />
+        {houses.map((house, i) => (
+          <mesh key={i} position={house.position}>
+            <House
+              id={i}
+            />
+          </mesh>
+        ))}
         <Grass />
-        <House />
-
-        <Bush position={[0.8, 0.2, 2.2]} scale={[0.5, 0.5, 0.5]} />
-        <Bush position={[1.4, 0.1, 2.1]} scale={[0.25, 0.25, 0.25]} />
-        <Bush position={[-0.8, 0.1, 2.2]} scale={[0.4, 0.4, 0.4]} />
-        <Bush position={[-1, 0.05, 2.6]} scale={[0.15, 0.15, 0.15]} />
       </Suspense>
 
       <OrbitControls />

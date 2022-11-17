@@ -9,7 +9,7 @@ import doorHeightTextureLoader from "./assets/textures/door/height.jpg";
 import doorNormalTextureLoader from "./assets/textures/door/normal.jpg";
 import doorMetalnessTextureLoader from "./assets/textures/door/metalness.jpg";
 import doorRoughnessTextureLoader from "./assets/textures/door/roughness.jpg";
-
+import Bush from "./Bush";
 import bricksColorTextureLoader from "./assets/textures/bricks/color.jpg";
 import bricksAoTextureLoader from "./assets/textures/bricks/ambientOcclusion.jpg";
 import bricksRoughnessTextureLoader from "./assets/textures/bricks/roughness.jpg";
@@ -103,11 +103,15 @@ const House = () => {
       <pointLight
         castShadow={true}
         ref={doorLight}
-        intensity={1}
+        intensity={0}
         color="#ff7d46"
         distance={7}
         position={[0, 2.2, 2.7]}
       />
+      <Bush position={[0.8, 0.2, 2.2]} scale={[0.5, 0.5, 0.5]} />
+      <Bush position={[1.4, 0.1, 2.1]} scale={[0.25, 0.25, 0.25]} />
+      <Bush position={[-0.8, 0.1, 2.2]} scale={[0.4, 0.4, 0.4]} />
+      <Bush position={[-1, 0.05, 2.6]} scale={[0.15, 0.15, 0.15]} />
     </group>
   );
 };
