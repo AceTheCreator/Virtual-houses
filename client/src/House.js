@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from "react";
-import { useLoader } from "react-three-fiber";
+import React, { useRef, useEffect, useState } from "react";
+import { useLoader, extend } from "react-three-fiber";
 import * as THREE from "three";
-
+import { Text, } from "troika-three-text";
 import doorColorTextureLoader from "./assets/textures/door/color.jpg";
 import doorAlphaTextureLoader from "./assets/textures/door/alpha.jpg";
 import doorAoTextureLoader from "./assets/textures/door/ambientOcclusion.jpg";
@@ -14,12 +14,26 @@ import bricksColorTextureLoader from "./assets/textures/bricks/color.jpg";
 import bricksAoTextureLoader from "./assets/textures/bricks/ambientOcclusion.jpg";
 import bricksRoughnessTextureLoader from "./assets/textures/bricks/roughness.jpg";
 import bricksNormalTextureLoader from "./assets/textures/bricks/normal.jpg";
+import fonts from "./fonts";
 
-const House = () => {
+extend({ Text });
+
+const House = ({ id, units, requester, updater, sendPayload }) => {
+  const [newUnits, setNewUnits] = useState(units);
+  const [lightIntensity, setLightIntensity] = useState(5);
   const door = useRef();
   const bricks = useRef();
   const doorLight = useRef();
-
+      const [opts, setOpts] = useState({
+        font: "Philosopher",
+        fontSize: 0.5,
+        color: "white",
+        maxWidth: 300,
+        lineHeight: 1,
+        letterSpacing: 0,
+        textAlign: "justify",
+        materialType: "MeshPhongMaterial",
+      });
   const [
     doorColorTexture,
     doorAlphaTexture,
@@ -27,7 +41,7 @@ const House = () => {
     doorHeightTexture,
     doorNormalTexture,
     doorMetalnessTexture,
-    doorRoughnessTexture
+    doorRoughnessTexture,
   ] = useLoader(THREE.TextureLoader, [
     doorColorTextureLoader,
     doorAlphaTextureLoader,
@@ -35,19 +49,19 @@ const House = () => {
     doorHeightTextureLoader,
     doorNormalTextureLoader,
     doorMetalnessTextureLoader,
-    doorRoughnessTextureLoader
+    doorRoughnessTextureLoader,
   ]);
 
   const [
     bricksColorTexture,
     bricksAmbientOcclusionTexture,
     bricksRoughnessTexture,
-    bricksNormalTexture
+    bricksNormalTexture,
   ] = useLoader(THREE.TextureLoader, [
     bricksColorTextureLoader,
     bricksAoTextureLoader,
     bricksRoughnessTextureLoader,
-    bricksNormalTextureLoader
+    bricksNormalTextureLoader,
   ]);
 
   useEffect(() => {
@@ -67,6 +81,40 @@ const House = () => {
       )
     );
   }, []);
+
+  // When ever you recieve a balance request
+  useEffect(() => {
+    if (requester) {
+      sendPayload(
+        "unitBalanceResponder",
+        JSON.stringify({ buildingID: id, units: newUnits })
+      );
+    }
+  }, [requester]);
+
+  useEffect(() => {
+    if (updater && updater.buildingID == id) {
+      setNewUnits(updater.units);
+    }
+  }, [updater]);
+
+  useEffect(() => {
+    if (newUnits < 50) {
+      setLightIntensity(3);
+    }
+    if (newUnits < 30) {
+      setLightIntensity(2);
+    }
+    if (newUnits < 20) {
+      setLightIntensity(1);
+    }
+    if (newUnits < 10) {
+      setLightIntensity(0.5);
+    }
+    if (newUnits <= 0) {
+      setLightIntensity(0);
+    }
+  }, [newUnits]);
 
   return (
     <group>
@@ -98,12 +146,25 @@ const House = () => {
           metalnessMap={doorMetalnessTexture}
           roughnessMap={doorRoughnessTexture}
         />
+        <text
+          {...opts}
+          text={`${newUnits} Watts`}
+          font={fonts[opts.font]}
+          anchorX="center"
+          anchorY="bottom"
+          position-z={1}
+          position-y={2}
+        >
+          {opts.materialType === "MeshPhongMaterial" ? (
+            <meshPhongMaterial attach="material" color={opts.color} />
+          ) : null}
+        </text>
       </mesh>
 
       <pointLight
         castShadow={true}
         ref={doorLight}
-        intensity={0}
+        intensity={lightIntensity}
         color="#ff7d46"
         distance={7}
         position={[0, 2.2, 2.7]}
