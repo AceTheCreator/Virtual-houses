@@ -60,5 +60,5 @@ components:
             type: integer
             description: Building unique indentifier
           unit:
-            type: number
+            type: integer
             description: Number of unit remaining from building
