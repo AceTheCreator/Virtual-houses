@@ -3,11 +3,8 @@ import { Canvas, useFrame, useThree } from "react-three-fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as mqtt from "react-paho-mqtt";
 
-import Lights from "./Lights";
 import House from "./House";
 import Grass from "./Grass";
-import Bush from "./Bush";
-import Graves from "./Graves";
 
 import "./styles.css";
 
